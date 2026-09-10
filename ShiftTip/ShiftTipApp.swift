@@ -2,31 +2,39 @@
 //  ShiftTipApp.swift
 //  ShiftTip
 //
-//  Created by Joshua Plascencia on 9/3/26.
+//  Created by Joshua Mkaddesh on 9/3/26.
 //
 
 import SwiftUI
-import SwiftData
 
 @main
 struct ShiftTipApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
+    @State private var shiftTypeStore = ShiftTypeStore()
+    @State private var shiftStore = ShiftStore()
+    @State private var workplaceStore = WorkplaceStore()
+
+    @AppStorage("hasSeenWelcome")
+    private var hasSeenWelcome = false
 
     var body: some Scene {
+
         WindowGroup {
-            ContentView()
+
+            Group {
+
+                if hasSeenWelcome {
+
+                    ContentView()
+
+                } else {
+
+                    WelcomeView()
+                }
+            }
+            .environment(shiftStore)
+            .environment(workplaceStore)
+            .environment(shiftTypeStore)
         }
-        .modelContainer(sharedModelContainer)
     }
 }

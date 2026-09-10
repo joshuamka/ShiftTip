@@ -2,7 +2,7 @@
 //  Item.swift
 //  ShiftTip
 //
-//  Created by Joshua Plascencia on 9/3/26.
+//  Created by Joshua Mkaddesh on 9/3/26.
 //
 
 import Foundation

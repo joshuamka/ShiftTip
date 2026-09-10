@@ -2,60 +2,85 @@
 //  ContentView.swift
 //  ShiftTip
 //
-//  Created by Joshua Plascencia on 9/3/26.
+//  Created by Joshua Mkaddesh on 9/3/26.
 //
 
+// Background: #101010
+//Card:       #1E1E1E
+//Primary:    #FF2D55
+//Success:    #00C853
+//White:      #FFFFFF
+//Gray:       #A6A6A6
+
 import SwiftUI
-import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+
+    private let accentColor = Color(
+        red: 1.0,
+        green: 0.176,
+        blue: 0.333
+    )
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
-        }
-    }
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
+        TabView {
 
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
+            DashboardView()
+                .tabItem {
+                    Label(
+                        "Dashboard",
+                        systemImage: "house.fill"
+                    )
+                }
+
+            AddShiftView()
+                .tabItem {
+                    Label(
+                        "Add Shift",
+                        systemImage: "plus.circle.fill"
+                    )
+                }
+
+            HistoryView()
+                .tabItem {
+                    Label(
+                        "History",
+                        systemImage: "clock.arrow.circlepath"
+                    )
+                }
+
+            AnalyticsView()
+                .tabItem {
+                    Label(
+                        "Analytics",
+                        systemImage: "chart.bar.fill"
+                    )
+                }
+
+            ProfileView()
+                .tabItem {
+                    Label(
+                        "Profile",
+                        systemImage: "person.fill"
+                    )
+                }
         }
+        .tint(accentColor)
+        .toolbarBackground(
+            .visible,
+            for: .tabBar
+        )
+        .toolbarBackground(
+            Color(.secondarySystemGroupedBackground),
+            for: .tabBar
+        )
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .environment(
+            ShiftStore()
+        )
 }
