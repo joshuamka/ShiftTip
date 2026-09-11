@@ -14,7 +14,7 @@ struct ShiftRow: View {
 
     )
 
-    private var earningsPerHour: Double {
+    private var tipsPerHour: Double {
 
         guard shift.hoursWorked > 0 else {
 
@@ -24,7 +24,7 @@ struct ShiftRow: View {
 
         return
 
-            shift.totalEarnings /
+            shift.totalTips /
 
             shift.hoursWorked
 
@@ -44,9 +44,9 @@ struct ShiftRow: View {
 
     }
 
-    private var earningsPerHourText: String {
+    private var tipsPerHourText: String {
 
-        earningsPerHour.formatted(
+        tipsPerHour.formatted(
 
             .currency(
 
@@ -164,7 +164,7 @@ struct ShiftRow: View {
 
                 Text(
 
-                    "\(shift.shiftTypeName) • \(hoursText) hrs • \(earningsPerHourText)/hr"
+                    "\(shift.shiftTypeName) • \(hoursText) hrs • \(tipsPerHourText)/hr"
 
                 )
 
@@ -192,7 +192,7 @@ struct ShiftRow: View {
 
                 Text(
 
-                    shift.totalEarnings,
+                    shift.totalTips,
 
                     format:
 

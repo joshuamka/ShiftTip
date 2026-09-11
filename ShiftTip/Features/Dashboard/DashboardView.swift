@@ -42,13 +42,13 @@ struct DashboardView: View {
 
     private var weeklySummaryData: EarningsSummary { EarningsSummary(shifts: weeklyShifts) }
 
-    private var weeklyEarnings: Double { weeklySummaryData.earnings }
+    private var weeklyTipTotal: Double { weeklySummaryData.tips }
 
     private var weeklyTips: Double { weeklySummaryData.tips }
 
     private var weeklyHours: Double { weeklySummaryData.hours }
 
-    private var averagePerHour: Double { weeklySummaryData.averagePerHour }
+    private var averagePerHour: Double { weeklySummaryData.averageTipsPerHour }
 
     // MARK: - Weekly Goal
 
@@ -63,7 +63,7 @@ struct DashboardView: View {
         }
 
         return min(
-            weeklyEarnings / weeklyGoal,
+            weeklyTipTotal / weeklyGoal,
             1.0
         )
     }
@@ -75,7 +75,7 @@ struct DashboardView: View {
         }
 
         return Int(
-            weeklyEarnings /
+            weeklyTipTotal /
             weeklyGoal *
             100
         )
@@ -84,7 +84,7 @@ struct DashboardView: View {
     private var amountRemaining: Double {
 
         max(
-            weeklyGoal - weeklyEarnings,
+            weeklyGoal - weeklyTipTotal,
             0
         )
     }
@@ -92,7 +92,7 @@ struct DashboardView: View {
     private var amountOverGoal: Double {
 
         max(
-            weeklyEarnings - weeklyGoal,
+            weeklyTipTotal - weeklyGoal,
             0
         )
     }
@@ -100,7 +100,7 @@ struct DashboardView: View {
     private var goalReached: Bool {
 
         weeklyGoal > 0 &&
-        weeklyEarnings >= weeklyGoal
+        weeklyTipTotal >= weeklyGoal
     }
 
     // MARK: - Recent Shifts
@@ -118,7 +118,7 @@ struct DashboardView: View {
 
     // MARK: - All Time
 
-    private var allTimeEarnings: Double { EarningsSummary(shifts: shiftStore.shifts).earnings }
+    private var allTimeTipTotal: Double { EarningsSummary(shifts: shiftStore.shifts).tips }
 
     // MARK: - Body
 
@@ -133,6 +133,8 @@ struct DashboardView: View {
                     header
 
                     earningsHero
+
+                    EstimatedWagesCard(amount: weeklySummaryData.hourlyPay)
 
                     if weeklyGoal > 0 {
                         weeklyGoalCard
@@ -174,7 +176,7 @@ struct DashboardView: View {
                     .font(.title)
                     .fontWeight(.heavy)
 
-                Text("Your earnings at a glance")
+                Text("Your tips at a glance")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -241,14 +243,14 @@ struct DashboardView: View {
                 spacing: 5
             ) {
 
-                Text("Total Earnings")
+                Text("Total Tips")
                     .font(.subheadline)
                     .foregroundStyle(
                         .white.opacity(0.7)
                     )
 
                 Text(
-                    weeklyEarnings,
+                    weeklyTipTotal,
                     format:
                         .currency(
                             code: "USD"
@@ -301,7 +303,7 @@ struct DashboardView: View {
                     )
 
                 heroMiniStat(
-                    title: "Avg / Hr",
+                    title: "Tips / Hr",
                     value:
                         averagePerHour.formatted(
                             .currency(
@@ -443,7 +445,7 @@ struct DashboardView: View {
                     spacing: 2
                 ) {
 
-                    Text("Weekly Goal")
+                    Text("Weekly Tip Goal")
                         .font(.headline)
 
                     Text(
@@ -469,7 +471,7 @@ struct DashboardView: View {
             ) {
 
                 Text(
-                    weeklyEarnings,
+                    weeklyTipTotal,
                     format:
                         .currency(
                             code: "USD"
@@ -508,7 +510,7 @@ struct DashboardView: View {
             if goalReached {
 
                 Text(
-                    "\(amountOverGoal.formatted(.currency(code: "USD"))) over your weekly goal"
+                    "\(amountOverGoal.formatted(.currency(code: "USD"))) over your weekly tip goal"
                 )
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -575,7 +577,7 @@ struct DashboardView: View {
             HStack(spacing: 12) {
 
                 DashboardStatCard(
-                    title: "Avg / Hour",
+                    title: "Tips / Hour",
                     value:
                         averagePerHour.formatted(
                             .currency(
@@ -699,7 +701,7 @@ struct DashboardView: View {
                         .font(.headline)
 
                     Text(
-                        "Add your first shift to start tracking your earnings."
+                        "Add your first shift to start tracking your tips."
                     )
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -814,12 +816,12 @@ struct DashboardView: View {
                     spacing: 3
                 ) {
 
-                    Text("Total Earnings")
+                    Text("Total Tips")
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
                     Text(
-                        allTimeEarnings,
+                        allTimeTipTotal,
                         format:
                             .currency(
                                 code: "USD"
@@ -963,14 +965,14 @@ struct DashboardShiftRow: View {
         blue: 0.333
     )
 
-    private var earningsPerHour: Double {
+    private var tipsPerHour: Double {
 
         guard shift.hoursWorked > 0 else {
             return 0
         }
 
         return
-            shift.totalEarnings /
+            shift.totalTips /
             shift.hoursWorked
     }
 
@@ -983,9 +985,9 @@ struct DashboardShiftRow: View {
         )
     }
 
-    private var earningsPerHourText: String {
+    private var tipsPerHourText: String {
 
-        earningsPerHour.formatted(
+        tipsPerHour.formatted(
             .currency(
                 code: "USD"
             )
@@ -1052,7 +1054,7 @@ struct DashboardShiftRow: View {
                 }
 
                 Text(
-                    "\(shift.shiftType.rawValue) • \(hoursText) hrs • \(earningsPerHourText)/hr"
+                    "\(shift.shiftType.rawValue) • \(hoursText) hrs • \(tipsPerHourText)/hr"
                 )
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -1067,7 +1069,7 @@ struct DashboardShiftRow: View {
             ) {
 
                 Text(
-                    shift.totalEarnings,
+                    shift.totalTips,
                     format:
                         .currency(
                             code: "USD"

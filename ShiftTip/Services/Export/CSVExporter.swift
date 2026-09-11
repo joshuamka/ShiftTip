@@ -18,7 +18,7 @@ nonisolated struct CSVExporter {
             $0.date > $1.date
         }
 
-        var csv = "Date,Workplace,Shift Type,Hours Worked,Hourly Rate,Cash Tips,Card Tips,Tip Out,Total Tips,Hourly Pay,Total Earnings\n"
+        var csv = "Date,Workplace,Shift Type,Hours Worked,Hourly Rate,Cash Tips,Card Tips,Tip Out,Net Tips Paid After Shift,Estimated Gross Wages\n"
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -39,8 +39,7 @@ nonisolated struct CSVExporter {
                 formatNumber(shift.cardTips),
                 formatNumber(shift.tipOut),
                 formatNumber(shift.totalTips),
-                formatNumber(shift.hourlyEarnings),
-                formatNumber(shift.totalEarnings)
+                formatNumber(shift.hourlyEarnings)
             ]
 
             csv += row.joined(separator: ",")

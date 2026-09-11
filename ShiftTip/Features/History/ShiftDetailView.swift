@@ -14,7 +14,7 @@ struct ShiftDetailView: View {
 
     )
 
-    private var earningsPerHour: Double {
+    private var tipsPerHour: Double {
 
         guard shift.hoursWorked > 0 else {
 
@@ -24,7 +24,7 @@ struct ShiftDetailView: View {
 
         return
 
-            shift.totalEarnings /
+            shift.totalTips /
 
             shift.hoursWorked
 
@@ -51,6 +51,8 @@ struct ShiftDetailView: View {
             VStack(spacing: 22) {
 
                 earningsHero
+
+                EstimatedWagesCard(amount: shift.hourlyEarnings)
 
                 shiftInformationCard
 
@@ -98,7 +100,7 @@ struct ShiftDetailView: View {
 
                 Label(
 
-                    "SHIFT EARNINGS",
+                    "SHIFT TIPS",
 
                     systemImage:
 
@@ -144,7 +146,7 @@ struct ShiftDetailView: View {
 
             ) {
 
-                Text("Total Earnings")
+                Text("Total Tips")
 
                     .font(.subheadline)
 
@@ -156,7 +158,7 @@ struct ShiftDetailView: View {
 
                 Text(
 
-                    shift.totalEarnings,
+                    shift.totalTips,
 
                     format:
 
@@ -236,11 +238,11 @@ struct ShiftDetailView: View {
 
                 heroStat(
 
-                    title: "Avg / Hr",
+                    title: "Tips / Hr",
 
                     value:
 
-                        earningsPerHour.formatted(
+                        tipsPerHour.formatted(
 
                             .currency(
 
@@ -626,7 +628,7 @@ struct ShiftDetailView: View {
 
         detailCard(
 
-            title: "Earnings",
+            title: "Tips",
 
             icon: "chart.bar.fill"
 
@@ -634,7 +636,7 @@ struct ShiftDetailView: View {
 
             detailRow(
 
-                title: "Hourly Pay",
+                title: "Estimated Gross Wages",
 
                 value:
 
@@ -660,11 +662,11 @@ struct ShiftDetailView: View {
 
                 title:
 
-                    "Earnings Per Hour",
+                    "Tips Per Hour",
 
                 value:
 
-                    earningsPerHour
+                    tipsPerHour
 
                         .formatted(
 
@@ -690,7 +692,7 @@ struct ShiftDetailView: View {
 
                 )
 
-                Text("Total Earnings")
+                Text("Total Tips")
 
                     .fontWeight(.bold)
 
@@ -698,7 +700,7 @@ struct ShiftDetailView: View {
 
                 Text(
 
-                    shift.totalEarnings,
+                    shift.totalTips,
 
                     format:
 

@@ -85,7 +85,7 @@ struct EditShiftView: View {
 
     var totalTips: Double { draft.preview.totalTips }
     var hourlyEarnings: Double { draft.preview.hourlyEarnings }
-    var totalEarnings: Double { draft.preview.totalEarnings }
+    var primaryTipTotal: Double { draft.preview.totalTips }
 
     // MARK: - Body
 
@@ -96,6 +96,8 @@ struct EditShiftView: View {
             VStack(spacing: 22) {
 
                 earningsPreview
+
+                EstimatedWagesCard(amount: hourlyEarnings)
 
                 shiftInformationCard
 
@@ -145,7 +147,7 @@ struct EditShiftView: View {
             HStack {
 
                 Label(
-                    "SHIFT EARNINGS",
+                    "SHIFT TIPS",
                     systemImage: "pencil.circle.fill"
                 )
                 .font(.caption)
@@ -165,7 +167,7 @@ struct EditShiftView: View {
             }
 
             Text(
-                totalEarnings,
+                primaryTipTotal,
                 format: .currency(
                     code: "USD"
                 )
@@ -211,7 +213,7 @@ struct EditShiftView: View {
                     spacing: 3
                 ) {
 
-                    Text("Hourly Pay")
+                    Text("Estimated Gross Wages")
                         .font(.caption)
                         .foregroundStyle(
                             .white.opacity(0.65)
@@ -408,7 +410,7 @@ struct EditShiftView: View {
         ShiftTipsSection(cashTips: $cashTips, cardTips: $cardTips, tipOut: $tipOut)
     }
 
-    // MARK: - Earnings Breakdown
+    // MARK: - Tips and Wages
 
     private var earningsBreakdown: some View {
 
@@ -418,7 +420,7 @@ struct EditShiftView: View {
         ) {
 
             sectionHeader(
-                title: "Earnings Breakdown",
+                title: "Tips and Wages",
                 icon: "chart.bar.fill"
             )
 
@@ -433,7 +435,7 @@ struct EditShiftView: View {
             Divider()
 
             earningsRow(
-                title: "Hourly Pay",
+                title: "Estimated Gross Wages",
                 value: hourlyEarnings,
                 icon: "clock.fill"
             )
@@ -448,14 +450,14 @@ struct EditShiftView: View {
                         "dollarsign.circle.fill"
                     )
 
-                    Text("Total Earnings")
+                    Text("Total Tips")
                         .fontWeight(.bold)
                 }
 
                 Spacer()
 
                 Text(
-                    totalEarnings,
+                    primaryTipTotal,
                     format: .currency(
                         code: "USD"
                     )

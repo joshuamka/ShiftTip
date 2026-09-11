@@ -77,7 +77,7 @@ struct AddShiftView: View {
 
     var totalTips: Double { draft.preview.totalTips }
     var hourlyEarnings: Double { draft.preview.hourlyEarnings }
-    var totalEarnings: Double { draft.preview.totalEarnings }
+    var primaryTipTotal: Double { draft.preview.totalTips }
 
     // MARK: - Body
 
@@ -92,6 +92,8 @@ struct AddShiftView: View {
                     header
 
                     earningsPreview
+
+                    EstimatedWagesCard(amount: hourlyEarnings)
 
                     shiftInformationCard
 
@@ -263,7 +265,7 @@ struct AddShiftView: View {
 
                 Label(
 
-                    "SHIFT EARNINGS",
+                    "SHIFT TIPS",
 
                     systemImage:
 
@@ -303,7 +305,7 @@ struct AddShiftView: View {
 
             Text(
 
-                totalEarnings,
+                primaryTipTotal,
 
                 format:
 
@@ -385,7 +387,7 @@ struct AddShiftView: View {
 
                 ) {
 
-                    Text("Hourly Pay")
+                    Text("Estimated Gross Wages")
 
                         .font(.caption)
 
@@ -813,7 +815,7 @@ struct AddShiftView: View {
         ShiftTipsSection(cashTips: $cashTips, cardTips: $cardTips, tipOut: $tipOut)
     }
 
-    // MARK: - Earnings Breakdown
+    // MARK: - Tips and Wages
 
     private var earningsBreakdown: some View {
 
@@ -827,7 +829,7 @@ struct AddShiftView: View {
 
             sectionHeader(
 
-                title: "Earnings Breakdown",
+                title: "Tips and Wages",
 
                 icon:
 
@@ -851,7 +853,7 @@ struct AddShiftView: View {
 
             earningsRow(
 
-                title: "Hourly Pay",
+                title: "Estimated Gross Wages",
 
                 value: hourlyEarnings,
 
@@ -909,7 +911,7 @@ struct AddShiftView: View {
 
                     Text(
 
-                        "Total Earnings"
+                        "Total Tips"
 
                     )
 
@@ -921,7 +923,7 @@ struct AddShiftView: View {
 
                 Text(
 
-                    totalEarnings,
+                    primaryTipTotal,
 
                     format:
 

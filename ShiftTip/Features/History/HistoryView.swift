@@ -134,7 +134,7 @@ struct HistoryView: View {
 
     private var summary: EarningsSummary { EarningsSummary(shifts: filteredShifts) }
 
-    private var filteredEarnings: Double { summary.earnings }
+    private var filteredTipTotal: Double { summary.tips }
 
     private var filteredTips: Double { summary.tips }
 
@@ -155,6 +155,8 @@ struct HistoryView: View {
                     if !shiftStore.shifts.isEmpty {
 
                         summaryCard
+
+                        EstimatedWagesCard(amount: summary.hourlyPay)
 
                         searchBar
 
@@ -326,9 +328,9 @@ struct HistoryView: View {
 
                         filtersAreActive
 
-                        ? "FILTERED EARNINGS"
+                        ? "FILTERED TIPS"
 
-                        : "TOTAL EARNINGS"
+                        : "TOTAL TIPS"
 
                     )
 
@@ -344,7 +346,7 @@ struct HistoryView: View {
 
                     Text(
 
-                        filteredEarnings,
+                        filteredTipTotal,
 
                         format:
 

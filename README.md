@@ -92,3 +92,17 @@ swiftc ShiftTip/Data/Persistence/RecordStorage.swift \
   Tests/RecordStorageTests.swift -o /tmp/shifttip-storage-tests
 /tmp/shifttip-storage-tests
 ```
+
+## Tips and wages
+
+Cash and card tips are paid after each shift. Dashboard, History, calendar,
+analytics rankings, hourly averages, and goal progress therefore use net tips
+(cash + card - tip out). Estimated gross wages (hours × rate) are shown separately
+and never added to displayed tip totals. Wage cards explain that actual payroll
+checks can differ, including $0 after deductions. Analytics offers separate Tips
+and Gross Wages chart metrics. PDF and CSV show separate tip/wage amounts with no
+combined total. Existing goal amounts are preserved and now apply to tips only.
+
+Existing shift JSON is unchanged. Internal combined estimates remain for backward
+compatibility, but are not presented as received income. Actual paycheck entry,
+payroll deduction calculation, and backup/restore are not implemented yet.

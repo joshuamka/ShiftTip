@@ -16,7 +16,7 @@ nonisolated enum ReportExportService {
             switch (format, filtered) {
             case (.csv, false): prefix = "ShiftTip-All-Shifts"
             case (.csv, true): prefix = "ShiftTip-Filtered-Shifts"
-            case (.pdf, false): prefix = "ShiftTip-Earnings-Report"
+            case (.pdf, false): prefix = "ShiftTip-Tips-and-Wages-Report"
             case (.pdf, true): prefix = "ShiftTip-Filtered-Report"
             }
             // Isolate each export so an open share sheet's file cannot be overwritten.

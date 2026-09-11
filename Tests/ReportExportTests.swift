@@ -19,7 +19,10 @@ struct ReportExportTests {
         let csv = try String(contentsOf: url, encoding: .utf8)
         precondition(csv.contains("\"Cafe, Downtown\""))
         precondition(csv.contains("\"Private \"\"Event\"\"\""))
-        precondition(csv.contains("45.00,80.00,125.00"))
+        precondition(csv.contains("45.00,80.00"))
+        precondition(!csv.contains("Total Earnings"))
+        precondition(!csv.contains("125.00"))
+        precondition(csv.contains("Net Tips Paid After Shift,Estimated Gross Wages"))
         print("Report checks passed: dated filenames, timezone, custom shift names, CSV escaping, and totals.")
     }
 }

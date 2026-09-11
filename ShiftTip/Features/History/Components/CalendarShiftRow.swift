@@ -134,7 +134,7 @@ struct CalendarShiftRow: View {
 
                 Text(
 
-                    shift.totalEarnings,
+                    shift.totalTips,
 
                     format:
 

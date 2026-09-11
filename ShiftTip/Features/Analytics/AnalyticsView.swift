@@ -23,7 +23,7 @@ enum AnalyticsPeriod: String, CaseIterable, Identifiable {
 
 enum ChartMetric: String, CaseIterable, Identifiable {
 
-    case earnings = "Earnings"
+    case wages = "Gross Wages"
 
     case tips = "Tips"
 
@@ -39,7 +39,7 @@ struct AnalyticsView: View {
 
     @State private var selectedPeriod: AnalyticsPeriod = .week
 
-    @State private var selectedMetric: ChartMetric = .earnings
+    @State private var selectedMetric: ChartMetric = .tips
 
     private let accentColor = Color(
 
@@ -133,12 +133,12 @@ struct AnalyticsView: View {
 
     private var summary: EarningsSummary { EarningsSummary(shifts: filteredShifts) }
 
-    private var totalEarnings: Double { summary.earnings }
+    private var primaryTipTotal: Double { summary.tips }
     private var totalTips: Double { summary.tips }
     private var totalHourlyPay: Double { summary.hourlyPay }
     private var totalHours: Double { summary.hours }
-    private var averagePerShift: Double { summary.averagePerShift }
-    private var averagePerHour: Double { summary.averagePerHour }
+    private var averagePerShift: Double { summary.averageTipsPerShift }
+    private var averagePerHour: Double { summary.averageTipsPerHour }
     private var averageTipsPerShift: Double { summary.averageTipsPerShift }
 
     // MARK: - Best / Lowest Shift
@@ -147,7 +147,7 @@ struct AnalyticsView: View {
 
         filteredShifts.max {
 
-            $0.totalEarnings < $1.totalEarnings
+            $0.totalTips < $1.totalTips
 
         }
 
@@ -157,7 +157,7 @@ struct AnalyticsView: View {
 
         filteredShifts.min {
 
-            $0.totalEarnings < $1.totalEarnings
+            $0.totalTips < $1.totalTips
 
         }
 
@@ -196,7 +196,7 @@ struct AnalyticsView: View {
             shifts in
 
             let summary = EarningsSummary(shifts: shifts)
-            let earnings = summary.earnings
+            let grossWages = summary.hourlyPay
             let tips = summary.tips
             let hours = summary.hours
 
@@ -204,7 +204,7 @@ struct AnalyticsView: View {
 
                 workplace: workplace,
 
-                earnings: earnings,
+                grossWages: grossWages,
 
                 tips: tips,
 
@@ -218,7 +218,7 @@ struct AnalyticsView: View {
 
         .sorted {
 
-            $0.earnings > $1.earnings
+            $0.tips > $1.tips
 
         }
 
@@ -248,20 +248,20 @@ struct AnalyticsView: View {
         return grouped.map { typeName, shifts in
 
             let summary = EarningsSummary(shifts: shifts)
-            let earnings = summary.earnings
+            let grossWages = summary.hourlyPay
             let tips = summary.tips
             let hours = summary.hours
 
             return ShiftTypeAnalytics(
                 typeName: typeName,
-                earnings: earnings,
+                grossWages: grossWages,
                 tips: tips,
                 hours: hours,
                 shiftCount: shifts.count
             )
         }
         .sorted {
-            $0.earnings > $1.earnings
+            $0.tips > $1.tips
         }
     }
 
@@ -292,6 +292,8 @@ struct AnalyticsView: View {
                     } else {
 
                         earningsHero
+
+                        EstimatedWagesCard(amount: summary.hourlyPay)
 
                         chartSection
 
@@ -497,7 +499,7 @@ struct AnalyticsView: View {
 
             ) {
 
-                Text("Total Earnings")
+                Text("Total Tips")
 
                     .font(.subheadline)
 
@@ -509,7 +511,7 @@ struct AnalyticsView: View {
 
                 Text(
 
-                    totalEarnings,
+                    primaryTipTotal,
 
                     format:
 
@@ -591,7 +593,7 @@ struct AnalyticsView: View {
 
                 heroStat(
 
-                    title: "Avg / Hr",
+                    title: "Tips / Hr",
 
                     value:
 
@@ -941,7 +943,7 @@ struct AnalyticsView: View {
 
                         bestShift?
 
-                        .totalEarnings
+                        .totalTips
 
                         .formatted(
 
@@ -965,7 +967,7 @@ struct AnalyticsView: View {
 
                         lowestShift?
 
-                        .totalEarnings
+                        .totalTips
 
                         .formatted(
 
@@ -1013,7 +1015,7 @@ struct AnalyticsView: View {
 
                 AnalyticsStatCard(
 
-                    title: "Avg / Hour",
+                    title: "Tips / Hour",
 
                     value:
 
@@ -1039,13 +1041,13 @@ struct AnalyticsView: View {
 
     }
 
-    // MARK: - Earnings Breakdown
+    // MARK: - Tips and Wages
 
     private var earningsBreakdownSection: some View {
 
         analyticsCard(
 
-            title: "Earnings Breakdown",
+            title: "Tips and Wages",
 
             icon: "dollarsign.circle.fill"
 
@@ -1075,7 +1077,7 @@ struct AnalyticsView: View {
 
             AnalyticsRow(
 
-                title: "Hourly Pay",
+                title: "Estimated Gross Wages",
 
                 value:
 
@@ -1097,11 +1099,11 @@ struct AnalyticsView: View {
 
             AnalyticsRow(
 
-                title: "Total Earnings",
+                title: "Total Tips",
 
                 value:
 
-                    totalEarnings.formatted(
+                    primaryTipTotal.formatted(
 
                         .currency(
 
@@ -1325,7 +1327,7 @@ struct AnalyticsView: View {
 
                     Text(
 
-                        bestWorkplace.earnings,
+                        bestWorkplace.tips,
 
                         format:
 
@@ -1487,7 +1489,7 @@ struct AnalyticsView: View {
 
                 Text(
 
-                    item.earnings,
+                    item.tips,
 
                     format:
 
@@ -1507,7 +1509,7 @@ struct AnalyticsView: View {
 
                 Text(
 
-                    "Tips \(item.tips.formatted(.currency(code: "USD")))"
+                    "Est. wages \(item.grossWages.formatted(.currency(code: "USD")))"
 
                 )
 
@@ -1515,7 +1517,7 @@ struct AnalyticsView: View {
 
                 Text(
 
-                    "\(item.earningsPerHour.formatted(.currency(code: "USD")))/hr"
+                    "\(item.tipsPerHour.formatted(.currency(code: "USD")))/hr"
 
                 )
 
@@ -1655,7 +1657,7 @@ struct AnalyticsView: View {
 
                     Text(
 
-                        bestShiftType.earnings,
+                        bestShiftType.tips,
 
                         format:
 
@@ -1823,7 +1825,7 @@ struct AnalyticsView: View {
 
                 Text(
 
-                    item.earnings,
+                    item.tips,
 
                     format:
 
@@ -1851,7 +1853,7 @@ struct AnalyticsView: View {
 
                 Text(
 
-                    "\(item.earningsPerHour.formatted(.currency(code: "USD")))/hr"
+                    "\(item.tipsPerHour.formatted(.currency(code: "USD")))/hr"
 
                 )
 
@@ -2027,7 +2029,7 @@ struct AnalyticsView: View {
 
                         HStack {
 
-                            Text("Total Earnings")
+                            Text("Total Tips")
 
                             Spacer()
 
@@ -2035,7 +2037,7 @@ struct AnalyticsView: View {
 
                                 bestShift
 
-                                    .totalEarnings,
+                                    .totalTips,
 
                                 format:
 
@@ -2167,7 +2169,7 @@ struct AnalyticsView: View {
 
             Text(
 
-                "Add shifts for this period to see your earnings analytics."
+                "Add shifts for this period to see your tips analytics."
 
             )
 
@@ -2323,9 +2325,9 @@ struct AnalyticsView: View {
 
         switch selectedMetric {
 
-        case .earnings:
+        case .wages:
 
-            return shift.totalEarnings
+            return shift.hourlyEarnings
 
         case .tips:
 
@@ -2388,7 +2390,7 @@ struct WorkplaceAnalytics: Identifiable {
 
     let workplace: String
 
-    let earnings: Double
+    let grossWages: Double
 
     let tips: Double
 
@@ -2402,7 +2404,7 @@ struct WorkplaceAnalytics: Identifiable {
 
     }
 
-    var earningsPerHour: Double {
+    var tipsPerHour: Double {
 
         guard hours > 0 else {
 
@@ -2410,7 +2412,7 @@ struct WorkplaceAnalytics: Identifiable {
 
         }
 
-        return earnings / hours
+        return tips / hours
 
     }
 
@@ -2423,7 +2425,7 @@ struct WorkplaceAnalytics: Identifiable {
 struct ShiftTypeAnalytics: Identifiable {
 
     let typeName: String
-    let earnings: Double
+    let grossWages: Double
     let tips: Double
     let hours: Double
     let shiftCount: Int
@@ -2438,16 +2440,16 @@ struct ShiftTypeAnalytics: Identifiable {
             return 0
         }
 
-        return earnings / Double(shiftCount)
+        return tips / Double(shiftCount)
     }
 
-    var earningsPerHour: Double {
+    var tipsPerHour: Double {
 
         guard hours > 0 else {
             return 0
         }
 
-        return earnings / hours
+        return tips / hours
     }
 }
 

@@ -22,8 +22,7 @@ nonisolated struct PDFExporter {
         let totalHours = summary.hours
         let totalTips = summary.tips
         let hourlyPay = summary.hourlyPay
-        let totalEarnings = summary.earnings
-        let averagePerHour = summary.averagePerHour
+        let averagePerHour = summary.averageTipsPerHour
 
         let pageWidth: CGFloat = 612
         let pageHeight: CGFloat = 792
@@ -81,7 +80,7 @@ nonisolated struct PDFExporter {
                 y += 38
 
                 drawText(
-                    "Earnings Report",
+                    "Tips and Wages Report",
                     font:
                         .boldSystemFont(
                             ofSize: 20
@@ -118,7 +117,12 @@ nonisolated struct PDFExporter {
                         )
                 )
 
-                y += 35
+                drawText(
+                    "Tips paid after each shift. Wages are estimates before payroll deductions, not net checks.",
+                    font: .systemFont(ofSize: 9),
+                    rect: CGRect(x: leftMargin, y: y + 16, width: contentWidth, height: 18)
+                )
+                y += 50
 
                 // MARK: Summary
 
@@ -153,15 +157,11 @@ nonisolated struct PDFExporter {
                         formatCurrency(totalTips)
                     ),
                     (
-                        "Hourly Pay",
+                        "Est. Gross Wages",
                         formatCurrency(hourlyPay)
                     ),
                     (
-                        "Total Earnings",
-                        formatCurrency(totalEarnings)
-                    ),
-                    (
-                        "Average / Hour",
+                        "Tips / Hour",
                         formatCurrency(
                             averagePerHour
                         )
@@ -239,7 +239,7 @@ nonisolated struct PDFExporter {
                         y = 40
 
                         drawText(
-                            "ShiftTip Earnings Report",
+                            "ShiftTip Tips and Wages Report",
                             font:
                                 .boldSystemFont(
                                     ofSize: 14
@@ -366,7 +366,7 @@ nonisolated struct PDFExporter {
         )
 
         drawText(
-            "Earnings",
+            "Est. Wages",
             font: font,
             rect:
                 CGRect(
@@ -467,7 +467,7 @@ nonisolated struct PDFExporter {
 
         drawText(
             formatCurrency(
-                shift.totalEarnings
+                shift.hourlyEarnings
             ),
             font: font,
             rect:

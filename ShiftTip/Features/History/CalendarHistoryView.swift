@@ -48,11 +48,11 @@ struct CalendarHistoryView: View {
 
     }
 
-    private var selectedDayEarnings: Double {
+    private var selectedDayTipTotal: Double {
 
         selectedDayShifts.reduce(0) {
 
-            $0 + $1.totalEarnings
+            $0 + $1.totalTips
 
         }
 
@@ -88,7 +88,7 @@ struct CalendarHistoryView: View {
 
         return
 
-            selectedDayEarnings /
+            selectedDayTipTotal /
 
             selectedDayHours
 
@@ -126,11 +126,11 @@ struct CalendarHistoryView: View {
 
     }
 
-    private var monthlyEarnings: Double {
+    private var monthlyTipTotal: Double {
 
         monthShifts.reduce(0) {
 
-            $0 + $1.totalEarnings
+            $0 + $1.totalTips
 
         }
 
@@ -167,6 +167,8 @@ struct CalendarHistoryView: View {
                 VStack(spacing: 22) {
 
                     monthHero
+
+                    EstimatedWagesCard(amount: EarningsSummary(shifts: monthShifts).hourlyPay)
 
                     calendarCard
 
@@ -248,7 +250,7 @@ struct CalendarHistoryView: View {
 
                 ) {
 
-                    Text("MONTH SUMMARY")
+                    Text("MONTHLY TIPS")
 
                         .font(.caption)
 
@@ -322,7 +324,7 @@ struct CalendarHistoryView: View {
 
             Text(
 
-                monthlyEarnings,
+                monthlyTipTotal,
 
                 format:
 
@@ -822,11 +824,11 @@ struct CalendarHistoryView: View {
 
                 CalendarStatCard(
 
-                    title: "Earnings",
+                    title: "Tips",
 
                     value:
 
-                        selectedDayEarnings
+                        selectedDayTipTotal
 
                             .formatted(
 
@@ -894,7 +896,7 @@ struct CalendarHistoryView: View {
 
                 CalendarStatCard(
 
-                    title: "Avg / Hr",
+                    title: "Tips / Hr",
 
                     value:
 

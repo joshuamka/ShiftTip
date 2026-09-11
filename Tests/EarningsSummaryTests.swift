@@ -12,7 +12,15 @@ struct EarningsSummaryTests {
         precondition(summary.tips == 140 && summary.hourlyPay == 180 && summary.earnings == 320)
         precondition(summary.averagePerHour == 32) // Weighted, not average of shift rates.
         precondition(summary.averagePerShift == 160 && summary.averageTipsPerShift == 70)
+        precondition(summary.tips == 140 && summary.averageTipsPerHour == 14)
+        var higherWages = shifts
+        higherWages[0].hourlyRate = 100
+        let changed = EarningsSummary(shifts: higherWages)
+        precondition(changed.tips == summary.tips)
+        precondition(changed.averageTipsPerHour == summary.averageTipsPerHour)
+        precondition(changed.hourlyPay != summary.hourlyPay)
         let empty = EarningsSummary(shifts: [])
+        precondition(empty.averageTipsPerHour == 0)
         precondition(empty.shiftCount == 0 && empty.earnings == 0)
         precondition(empty.averagePerHour == 0 && empty.averagePerShift == 0 && empty.averageTipsPerShift == 0)
         let legacy = EarningsSummary(shifts: [

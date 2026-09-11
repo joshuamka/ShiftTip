@@ -282,7 +282,7 @@ struct ProfileView: View {
 
                 Text(
 
-                    "Your shift preferences and earnings goals"
+                    "Your shift preferences and tip goals"
 
                 )
 
@@ -677,7 +677,7 @@ struct ProfileView: View {
 
     }
 
-    // MARK: - Earnings Goals
+    // MARK: - Tip Goals
 
     private var earningsGoalsCard: some View {
 
@@ -691,11 +691,11 @@ struct ProfileView: View {
 
             sectionHeader(
 
-                title: "Earnings Goals",
+                title: "Tip Goals",
 
                 subtitle:
 
-                    "Set targets to track your progress",
+                    "Goals count tips only. Wages are excluded.",
 
                 icon: "target"
 
@@ -707,7 +707,7 @@ struct ProfileView: View {
 
                 goalInputCard(
 
-                    title: "Weekly Goal",
+                    title: "Weekly Tip Goal",
 
                     subtitle:
 
@@ -725,7 +725,7 @@ struct ProfileView: View {
 
                 goalInputCard(
 
-                    title: "Monthly Goal",
+                    title: "Monthly Tip Goal",
 
                     subtitle:
 

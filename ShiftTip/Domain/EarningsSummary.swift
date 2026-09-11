@@ -26,6 +26,8 @@ nonisolated struct EarningsSummary {
         self.earnings = earnings
     }
 
+    var averageTipsPerHour: Double { hours > 0 ? tips / hours : 0 }
+
     var averagePerHour: Double { hours > 0 ? earnings / hours : 0 }
     var averagePerShift: Double { shiftCount > 0 ? earnings / Double(shiftCount) : 0 }
     var averageTipsPerShift: Double { shiftCount > 0 ? tips / Double(shiftCount) : 0 }
