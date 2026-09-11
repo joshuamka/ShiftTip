@@ -164,7 +164,7 @@ struct ShiftRow: View {
 
                 Text(
 
-                    "\\(shift.shiftTypeName) • \\(hoursText) hrs • \\(earningsPerHourText)/hr"
+                    "\(shift.shiftTypeName) • \(hoursText) hrs • \(earningsPerHourText)/hr"
 
                 )
 

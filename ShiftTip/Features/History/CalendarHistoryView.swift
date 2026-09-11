@@ -362,7 +362,7 @@ struct CalendarHistoryView: View {
 
                     value:
 
-                        "\\(monthShifts.count)"
+                        "\(monthShifts.count)"
 
                 )
 
@@ -716,7 +716,7 @@ struct CalendarHistoryView: View {
 
                         ? "1 Shift"
 
-                        : "\\(selectedDayShifts.count) Shifts"
+                        : "\(selectedDayShifts.count) Shifts"
 
                     )
 

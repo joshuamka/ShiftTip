@@ -390,7 +390,7 @@ struct HistoryView: View {
 
                     Text(
 
-                        "\\(filteredShifts.count)"
+                        "\(filteredShifts.count)"
 
                     )
 
@@ -1137,7 +1137,7 @@ struct HistoryView: View {
 
                         Text(
 
-                            "\\(filteredShifts.count) found"
+                            "\(filteredShifts.count) found"
 
                         )
 

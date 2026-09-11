@@ -476,7 +476,7 @@ struct ShiftDetailView: View {
 
                 title: "Hours Worked",
 
-                value: "\\(hoursText) hrs",
+                value: "\(hoursText) hrs",
 
                 icon: "clock.fill"
 

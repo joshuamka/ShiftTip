@@ -106,7 +106,7 @@ struct CalendarShiftRow: View {
 
                     Text(
 
-                        "\\(hoursText) hrs"
+                        "\(hoursText) hrs"
 
                     )
 
