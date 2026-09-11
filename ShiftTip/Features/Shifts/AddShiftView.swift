@@ -168,6 +168,9 @@ struct AddShiftView: View {
 
         }
 
+        .storageStatus(message: shiftStore.errorMessage,
+                       canReload: shiftStore.loadFailed,
+                       reload: { shiftStore.reload() })
     }
 
     // MARK: - Header
@@ -1308,11 +1311,11 @@ struct AddShiftView: View {
             return
         }
 
-        shiftStore.addShift(
+        guard shiftStore.addShift(
 
             shift
 
-        )
+        ) else { return }
 
         date = Date()
 

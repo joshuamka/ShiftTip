@@ -77,6 +77,9 @@ struct EditWorkplaceView: View {
                 }
             }
         }
+        .storageStatus(message: workplaceStore.errorMessage,
+                       canReload: workplaceStore.loadFailed,
+                       reload: { workplaceStore.reload() })
     }
 
     private var workplaceCard: some View {
@@ -234,9 +237,9 @@ struct EditWorkplaceView: View {
                 role: .destructive
             ) {
 
-                workplaceStore.deleteWorkplace(
+                guard workplaceStore.deleteWorkplace(
                     workplace
-                )
+                ) else { return }
 
                 dismiss()
             }
@@ -293,9 +296,9 @@ struct EditWorkplaceView: View {
                 Double(hourlyRate) ?? 0
         )
 
-        workplaceStore.updateWorkplace(
+        guard workplaceStore.updateWorkplace(
             updatedWorkplace
-        )
+        ) else { return }
 
         dismiss()
     }

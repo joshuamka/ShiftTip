@@ -1,58 +1,58 @@
-//
-//  ShiftStore.swift
-//  ShiftTip
-//
-//  Created by Joshua Mkaddesh on 9/9/26.
-//
-
 import Foundation
-import SwiftUI
 import Observation
 
 @Observable
-class ShiftStore {
+final class ShiftStore {
+    private(set) var shifts: [Shift] = []
+    private(set) var errorMessage: String?
+    private(set) var loadFailed = false
+    @ObservationIgnored private let repository: RecordRepository<Shift>
 
-    var shifts: [Shift] = [] {
-        didSet {
-            saveShifts()
+    init(storage: RecordStorage = .defaults()) {
+        repository = RecordRepository(key: "savedShifts", storage: storage)
+        reload()
+    }
+
+    func reload() {
+        do {
+            let loaded = try repository.load()
+            shifts = loaded ?? []
+            loadFailed = false
+            errorMessage = nil
+        } catch {
+            loadFailed = true
+            errorMessage = "Could not load shifts. Existing saved data has been left untouched. Changes are blocked until loading succeeds."
         }
     }
 
-    private let saveKey = "savedShifts"
-
-    init() {
-        loadShifts()
-    }
-
-    func addShift(_ shift: Shift) {
-        shifts.append(shift)
-    }
-
-    func deleteShift(_ shift: Shift) {
-        shifts.removeAll { $0.id == shift.id }
-    }
-
-    func updateShift(_ updatedShift: Shift) {
-        guard let index = shifts.firstIndex(where: { $0.id == updatedShift.id }) else {
-            return
-        }
-
-        shifts[index] = updatedShift
-    }
-
-    private func saveShifts() {
-        if let encoded = try? JSONEncoder().encode(shifts) {
-            UserDefaults.standard.set(encoded, forKey: saveKey)
+    @discardableResult
+    private func commit(_ updated: [Shift]) -> Bool {
+        guard !loadFailed else { return false }
+        do {
+            try repository.save(updated)
+            shifts = updated
+            errorMessage = nil
+            return true
+        } catch {
+            errorMessage = "Could not save shifts. Your changes were not applied. Keep your entries and try again."
+            return false
         }
     }
 
-    private func loadShifts() {
-        guard let data = UserDefaults.standard.data(forKey: saveKey),
-              let decoded = try? JSONDecoder().decode([Shift].self, from: data)
-        else {
-            return
-        }
+    @discardableResult
+    func addShift(_ shift: Shift) -> Bool { commit(shifts + [shift]) }
 
-        shifts = decoded
+    @discardableResult
+    func deleteShift(_ shift: Shift) -> Bool { commit(shifts.filter { $0.id != shift.id }) }
+
+    @discardableResult
+    func updateShift(_ shift: Shift) -> Bool {
+        guard let index = shifts.firstIndex(where: { $0.id == shift.id }) else {
+            errorMessage = "This shift is no longer available. Your edits have not been saved."
+            return false
+        }
+        var updated = shifts
+        updated[index] = shift
+        return commit(updated)
     }
 }

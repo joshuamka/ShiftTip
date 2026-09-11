@@ -56,6 +56,9 @@ struct AddShiftTypeView: View {
                 }
             }
         }
+        .storageStatus(message: shiftTypeStore.errorMessage,
+                       canReload: shiftTypeStore.loadFailed,
+                       reload: { shiftTypeStore.reload() })
     }
 
     // MARK: - Header
@@ -194,9 +197,9 @@ struct AddShiftTypeView: View {
             return
         }
 
-        shiftTypeStore.addShiftType(
+        guard shiftTypeStore.addShiftType(
             name: cleanedName
-        )
+        ) else { return }
 
         dismiss()
     }

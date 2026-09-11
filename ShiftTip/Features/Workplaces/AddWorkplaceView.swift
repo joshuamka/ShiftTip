@@ -76,6 +76,9 @@ struct AddWorkplaceView: View {
                 }
             }
         }
+        .storageStatus(message: workplaceStore.errorMessage,
+                       canReload: workplaceStore.loadFailed,
+                       reload: { workplaceStore.reload() })
     }
 
     private var workplaceCard: some View {
@@ -217,10 +220,10 @@ struct AddWorkplaceView: View {
 
     private func saveWorkplace() {
 
-        workplaceStore.addWorkplace(
+        guard workplaceStore.addWorkplace(
             name: name,
             hourlyRate: Double(hourlyRate) ?? 0
-        )
+        ) else { return }
 
         dismiss()
     }

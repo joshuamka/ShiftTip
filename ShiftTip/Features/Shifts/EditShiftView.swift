@@ -128,6 +128,9 @@ struct EditShiftView: View {
         .onAppear {
             ensureShiftTypeExists()
         }
+        .storageStatus(message: shiftStore.errorMessage,
+                       canReload: shiftStore.loadFailed,
+                       reload: { shiftStore.reload() })
     }
 
     // MARK: - Earnings Preview
@@ -564,7 +567,7 @@ struct EditShiftView: View {
                 role: .destructive
             ) {
 
-                shiftStore.deleteShift(shift)
+                guard shiftStore.deleteShift(shift) else { return }
 
                 dismiss()
             }
@@ -733,9 +736,9 @@ struct EditShiftView: View {
             return
         }
 
-        shiftStore.updateShift(
+        guard shiftStore.updateShift(
             updatedShift
-        )
+        ) else { return }
 
         dismiss()
     }

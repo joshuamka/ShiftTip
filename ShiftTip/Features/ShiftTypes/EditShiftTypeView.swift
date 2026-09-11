@@ -66,6 +66,9 @@ struct EditShiftTypeView: View {
                 }
             }
         }
+        .storageStatus(message: shiftTypeStore.errorMessage,
+                       canReload: shiftTypeStore.loadFailed,
+                       reload: { shiftTypeStore.reload() })
     }
 
     // MARK: - Header
@@ -272,9 +275,9 @@ struct EditShiftTypeView: View {
             name: cleanedName
         )
 
-        shiftTypeStore.updateShiftType(
+        guard shiftTypeStore.updateShiftType(
             updatedShiftType
-        )
+        ) else { return }
 
         dismiss()
     }
@@ -283,9 +286,9 @@ struct EditShiftTypeView: View {
 
     private func deleteShiftType() {
 
-        shiftTypeStore.deleteShiftType(
+        guard shiftTypeStore.deleteShiftType(
             shiftType
-        )
+        ) else { return }
 
         dismiss()
     }

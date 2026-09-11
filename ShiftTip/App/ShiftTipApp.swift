@@ -35,6 +35,16 @@ struct ShiftTipApp: App {
             .environment(shiftStore)
             .environment(workplaceStore)
             .environment(shiftTypeStore)
+            .storageStatus(message: shiftStore.errorMessage,
+                           canReload: shiftStore.loadFailed,
+                           reload: { shiftStore.reload() })
+            .storageStatus(message: workplaceStore.errorMessage,
+                           canReload: workplaceStore.loadFailed,
+                           reload: { workplaceStore.reload() })
+            .storageStatus(message: shiftTypeStore.errorMessage,
+                           canReload: shiftTypeStore.loadFailed,
+                           reload: { shiftTypeStore.reload() })
+
         }
     }
 }

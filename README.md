@@ -70,3 +70,25 @@ and utility types are nonisolated so generation does not block the main actor.
 Manual export checks: choose each all/filtered format, cancel and complete sharing,
 verify custom shift names and black PDF text, and confirm filters can change
 without changing the report already being generated.
+
+## Storage failure handling
+
+Stores load the existing UserDefaults JSON keys through `RecordRepository`.
+Missing data is distinct from unreadable data. A failed load preserves the stored
+bytes and blocks mutations until a successful retry. Shift-type defaults are used
+only when no saved collection exists; a saved empty collection stays empty.
+
+Mutations encode/write before publishing new observable values. Add/edit/delete
+forms close or clear only when the store returns success. Error banners offer
+Retry Loading for load failures; save failures retain form entries for retrying
+Save. The persistence backend is injectable for deterministic failure tests.
+
+UserDefaults does not report asynchronous disk-write errors, so this is not a
+claim of durable disk-write confirmation. Atomic file/database persistence and
+backup/restore remain future work.
+
+```sh
+swiftc ShiftTip/Data/Persistence/RecordStorage.swift \
+  Tests/RecordStorageTests.swift -o /tmp/shifttip-storage-tests
+/tmp/shifttip-storage-tests
+```
