@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct PDFExporter {
+nonisolated struct PDFExporter {
 
     static func createPDF(
         from shifts: [Shift],
@@ -18,26 +18,12 @@ struct PDFExporter {
             $0.date > $1.date
         }
 
-        let totalHours = sortedShifts.reduce(0) {
-            $0 + $1.hoursWorked
-        }
-
-        let totalTips = sortedShifts.reduce(0) {
-            $0 + $1.totalTips
-        }
-
-        let hourlyPay = sortedShifts.reduce(0) {
-            $0 + $1.hourlyEarnings
-        }
-
-        let totalEarnings = sortedShifts.reduce(0) {
-            $0 + $1.totalEarnings
-        }
-
-        let averagePerHour =
-            totalHours > 0
-            ? totalEarnings / totalHours
-            : 0
+        let summary = EarningsSummary(shifts: sortedShifts)
+        let totalHours = summary.hours
+        let totalTips = summary.tips
+        let hourlyPay = summary.hourlyPay
+        let totalEarnings = summary.earnings
+        let averagePerHour = summary.averagePerHour
 
         let pageWidth: CGFloat = 612
         let pageHeight: CGFloat = 792
@@ -67,7 +53,7 @@ struct PDFExporter {
                 to: url
             ) { context in
 
-                context.beginPage()
+                beginReportPage(context, bounds: pageRect)
 
                 var y: CGFloat = 40
 
@@ -82,13 +68,6 @@ struct PDFExporter {
                     font:
                         .boldSystemFont(
                             ofSize: 28
-                        ),
-                    color:
-                        UIColor(
-                            red: 1.0,
-                            green: 0.176,
-                            blue: 0.333,
-                            alpha: 1.0
                         ),
                     rect:
                         CGRect(
@@ -107,7 +86,6 @@ struct PDFExporter {
                         .boldSystemFont(
                             ofSize: 20
                         ),
-                    color: .label,
                     rect:
                         CGRect(
                             x: leftMargin,
@@ -131,8 +109,6 @@ struct PDFExporter {
                         .systemFont(
                             ofSize: 10
                         ),
-                    color:
-                        .secondaryLabel,
                     rect:
                         CGRect(
                             x: leftMargin,
@@ -152,7 +128,6 @@ struct PDFExporter {
                         .boldSystemFont(
                             ofSize: 16
                         ),
-                    color: .label,
                     rect:
                         CGRect(
                             x: leftMargin,
@@ -201,8 +176,6 @@ struct PDFExporter {
                             .systemFont(
                                 ofSize: 11
                             ),
-                        color:
-                            .secondaryLabel,
                         rect:
                             CGRect(
                                 x: leftMargin,
@@ -218,7 +191,6 @@ struct PDFExporter {
                             .boldSystemFont(
                                 ofSize: 11
                             ),
-                        color: .label,
                         rect:
                             CGRect(
                                 x: 220,
@@ -241,7 +213,6 @@ struct PDFExporter {
                         .boldSystemFont(
                             ofSize: 16
                         ),
-                    color: .label,
                     rect:
                         CGRect(
                             x: leftMargin,
@@ -263,7 +234,7 @@ struct PDFExporter {
 
                     if y > pageHeight - 70 {
 
-                        context.beginPage()
+                        beginReportPage(context, bounds: pageRect)
 
                         y = 40
 
@@ -272,13 +243,6 @@ struct PDFExporter {
                             font:
                                 .boldSystemFont(
                                     ofSize: 14
-                                ),
-                            color:
-                                UIColor(
-                                    red: 1.0,
-                                    green: 0.176,
-                                    blue: 0.333,
-                                    alpha: 1.0
                                 ),
                             rect:
                                 CGRect(
@@ -320,6 +284,18 @@ struct PDFExporter {
         }
     }
 
+    /// Report colors are fixed for readability, independent of app appearance.
+    private static func beginReportPage(
+        _ context: UIGraphicsPDFRendererContext,
+        bounds: CGRect
+    ) {
+        context.beginPage()
+        context.cgContext.saveGState()
+        context.cgContext.setFillColor(UIColor.white.cgColor)
+        context.cgContext.fill(bounds)
+        context.cgContext.restoreGState()
+    }
+
     private static func drawTableHeader(
         y: CGFloat
     ) {
@@ -332,7 +308,6 @@ struct PDFExporter {
         drawText(
             "Date",
             font: font,
-            color: .label,
             rect:
                 CGRect(
                     x: 40,
@@ -345,7 +320,6 @@ struct PDFExporter {
         drawText(
             "Workplace",
             font: font,
-            color: .label,
             rect:
                 CGRect(
                     x: 115,
@@ -358,7 +332,6 @@ struct PDFExporter {
         drawText(
             "Type",
             font: font,
-            color: .label,
             rect:
                 CGRect(
                     x: 225,
@@ -371,7 +344,6 @@ struct PDFExporter {
         drawText(
             "Hours",
             font: font,
-            color: .label,
             rect:
                 CGRect(
                     x: 290,
@@ -384,7 +356,6 @@ struct PDFExporter {
         drawText(
             "Tips",
             font: font,
-            color: .label,
             rect:
                 CGRect(
                     x: 345,
@@ -397,7 +368,6 @@ struct PDFExporter {
         drawText(
             "Earnings",
             font: font,
-            color: .label,
             rect:
                 CGRect(
                     x: 435,
@@ -434,7 +404,6 @@ struct PDFExporter {
         drawText(
             date,
             font: font,
-            color: .label,
             rect:
                 CGRect(
                     x: 40,
@@ -447,7 +416,6 @@ struct PDFExporter {
         drawText(
             workplace,
             font: font,
-            color: .label,
             rect:
                 CGRect(
                     x: 115,
@@ -458,9 +426,8 @@ struct PDFExporter {
         )
 
         drawText(
-            shift.shiftType.rawValue,
+            shift.shiftTypeName,
             font: font,
-            color: .label,
             rect:
                 CGRect(
                     x: 225,
@@ -475,7 +442,6 @@ struct PDFExporter {
                 shift.hoursWorked
             ),
             font: font,
-            color: .label,
             rect:
                 CGRect(
                     x: 290,
@@ -490,7 +456,6 @@ struct PDFExporter {
                 shift.totalTips
             ),
             font: font,
-            color: .label,
             rect:
                 CGRect(
                     x: 345,
@@ -505,7 +470,6 @@ struct PDFExporter {
                 shift.totalEarnings
             ),
             font: font,
-            color: .label,
             rect:
                 CGRect(
                     x: 435,
@@ -519,14 +483,13 @@ struct PDFExporter {
     private static func drawText(
         _ text: String,
         font: UIFont,
-        color: UIColor,
         rect: CGRect
     ) {
 
         let attributes:
             [NSAttributedString.Key: Any] = [
                 .font: font,
-                .foregroundColor: color
+                .foregroundColor: UIColor.black
             ]
 
         text.draw(

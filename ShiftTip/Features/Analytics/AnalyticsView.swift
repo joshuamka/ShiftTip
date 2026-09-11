@@ -131,93 +131,15 @@ struct AnalyticsView: View {
 
     }
 
-    // MARK: - Totals
+    private var summary: EarningsSummary { EarningsSummary(shifts: filteredShifts) }
 
-    private var totalEarnings: Double {
-
-        filteredShifts.reduce(0) {
-
-            $0 + $1.totalEarnings
-
-        }
-
-    }
-
-    private var totalTips: Double {
-
-        filteredShifts.reduce(0) {
-
-            $0 + $1.totalTips
-
-        }
-
-    }
-
-    private var totalHourlyPay: Double {
-
-        filteredShifts.reduce(0) {
-
-            $0 + $1.hourlyEarnings
-
-        }
-
-    }
-
-    private var totalHours: Double {
-
-        filteredShifts.reduce(0) {
-
-            $0 + $1.hoursWorked
-
-        }
-
-    }
-
-    // MARK: - Averages
-
-    private var averagePerShift: Double {
-
-        guard !filteredShifts.isEmpty else {
-
-            return 0
-
-        }
-
-        return
-
-            totalEarnings /
-
-            Double(filteredShifts.count)
-
-    }
-
-    private var averagePerHour: Double {
-
-        guard totalHours > 0 else {
-
-            return 0
-
-        }
-
-        return totalEarnings / totalHours
-
-    }
-
-    private var averageTipsPerShift: Double {
-
-        guard !filteredShifts.isEmpty else {
-
-            return 0
-
-        }
-
-        return
-
-            totalTips /
-
-            Double(filteredShifts.count)
-
-    }
+    private var totalEarnings: Double { summary.earnings }
+    private var totalTips: Double { summary.tips }
+    private var totalHourlyPay: Double { summary.hourlyPay }
+    private var totalHours: Double { summary.hours }
+    private var averagePerShift: Double { summary.averagePerShift }
+    private var averagePerHour: Double { summary.averagePerHour }
+    private var averageTipsPerShift: Double { summary.averageTipsPerShift }
 
     // MARK: - Best / Lowest Shift
 
@@ -273,29 +195,10 @@ struct AnalyticsView: View {
 
             shifts in
 
-            let earnings =
-
-                shifts.reduce(0) {
-
-                    $0 + $1.totalEarnings
-
-                }
-
-            let tips =
-
-                shifts.reduce(0) {
-
-                    $0 + $1.totalTips
-
-                }
-
-            let hours =
-
-                shifts.reduce(0) {
-
-                    $0 + $1.hoursWorked
-
-                }
+            let summary = EarningsSummary(shifts: shifts)
+            let earnings = summary.earnings
+            let tips = summary.tips
+            let hours = summary.hours
 
             return WorkplaceAnalytics(
 
@@ -344,17 +247,10 @@ struct AnalyticsView: View {
 
         return grouped.map { typeName, shifts in
 
-            let earnings = shifts.reduce(0) {
-                $0 + $1.totalEarnings
-            }
-
-            let tips = shifts.reduce(0) {
-                $0 + $1.totalTips
-            }
-
-            let hours = shifts.reduce(0) {
-                $0 + $1.hoursWorked
-            }
+            let summary = EarningsSummary(shifts: shifts)
+            let earnings = summary.earnings
+            let tips = summary.tips
+            let hours = summary.hours
 
             return ShiftTypeAnalytics(
                 typeName: typeName,

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CSVExporter {
+nonisolated struct CSVExporter {
 
     static func createCSV(
         from shifts: [Shift],
@@ -32,7 +32,7 @@ struct CSVExporter {
             let row = [
                 date,
                 escapeCSV(shift.workplace),
-                escapeCSV(shift.shiftType.rawValue),
+                escapeCSV(shift.shiftTypeName),
                 formatNumber(shift.hoursWorked),
                 formatNumber(shift.hourlyRate),
                 formatNumber(shift.cashTips),

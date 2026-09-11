@@ -40,35 +40,15 @@ struct DashboardView: View {
         }
     }
 
-    private var weeklyEarnings: Double {
+    private var weeklySummaryData: EarningsSummary { EarningsSummary(shifts: weeklyShifts) }
 
-        weeklyShifts.reduce(0) {
-            $0 + $1.totalEarnings
-        }
-    }
+    private var weeklyEarnings: Double { weeklySummaryData.earnings }
 
-    private var weeklyTips: Double {
+    private var weeklyTips: Double { weeklySummaryData.tips }
 
-        weeklyShifts.reduce(0) {
-            $0 + $1.totalTips
-        }
-    }
+    private var weeklyHours: Double { weeklySummaryData.hours }
 
-    private var weeklyHours: Double {
-
-        weeklyShifts.reduce(0) {
-            $0 + $1.hoursWorked
-        }
-    }
-
-    private var averagePerHour: Double {
-
-        guard weeklyHours > 0 else {
-            return 0
-        }
-
-        return weeklyEarnings / weeklyHours
-    }
+    private var averagePerHour: Double { weeklySummaryData.averagePerHour }
 
     // MARK: - Weekly Goal
 
@@ -138,12 +118,7 @@ struct DashboardView: View {
 
     // MARK: - All Time
 
-    private var allTimeEarnings: Double {
-
-        shiftStore.shifts.reduce(0) {
-            $0 + $1.totalEarnings
-        }
-    }
+    private var allTimeEarnings: Double { EarningsSummary(shifts: shiftStore.shifts).earnings }
 
     // MARK: - Body
 

@@ -65,35 +65,19 @@ struct AddShiftView: View {
 
     )
 
+    @State private var validationError: String?
+
     // MARK: - Calculations
 
-    var totalTips: Double {
-
-        let cash = Double(cashTips) ?? 0
-
-        let card = Double(cardTips) ?? 0
-
-        let out = Double(tipOut) ?? 0
-
-        return cash + card - out
-
+    private var draft: ShiftDraft {
+        ShiftDraft(date: date, workplace: workplace, shiftTypeName: shiftTypeName,
+                   hoursWorked: hoursWorked, hourlyRate: hourlyRate,
+                   cashTips: cashTips, cardTips: cardTips, tipOut: tipOut)
     }
 
-    var hourlyEarnings: Double {
-
-        let hours = Double(hoursWorked) ?? 0
-
-        let rate = Double(hourlyRate) ?? 0
-
-        return hours * rate
-
-    }
-
-    var totalEarnings: Double {
-
-        hourlyEarnings + totalTips
-
-    }
+    var totalTips: Double { draft.preview.totalTips }
+    var hourlyEarnings: Double { draft.preview.hourlyEarnings }
+    var totalEarnings: Double { draft.preview.totalEarnings }
 
     // MARK: - Body
 
@@ -136,6 +120,15 @@ struct AddShiftView: View {
             .navigationTitle("Add Shift")
 
             .navigationBarTitleDisplayMode(.inline)
+            .alert("Check Shift Details", isPresented: Binding(
+                get: { validationError != nil },
+                set: { if !$0 { validationError = nil } }
+            )) {
+                Button("OK") { validationError = nil }
+            } message: {
+                Text(validationError ?? "")
+            }
+
 
             .onAppear {
 
@@ -814,129 +807,7 @@ struct AddShiftView: View {
     // MARK: - Tips
 
     private var tipsCard: some View {
-
-        VStack(
-
-            alignment: .leading,
-
-            spacing: 16
-
-        ) {
-
-            sectionHeader(
-
-                title: "Tips",
-
-                icon: "banknote.fill"
-
-            )
-
-            Divider()
-
-            VStack(spacing: 0) {
-
-                inputRow(
-
-                    icon: "banknote.fill",
-
-                    title: "Cash Tips"
-
-                ) {
-
-                    TextField(
-
-                        "0.00",
-
-                        text: $cashTips
-
-                    )
-
-                    .keyboardType(.decimalPad)
-
-                    .multilineTextAlignment(
-
-                        .trailing
-
-                    )
-
-                }
-
-                Divider()
-
-                    .padding(.leading, 42)
-
-                inputRow(
-
-                    icon: "creditcard.fill",
-
-                    title:
-
-                        "Credit Card Tips"
-
-                ) {
-
-                    TextField(
-
-                        "0.00",
-
-                        text: $cardTips
-
-                    )
-
-                    .keyboardType(.decimalPad)
-
-                    .multilineTextAlignment(
-
-                        .trailing
-
-                    )
-
-                }
-
-                Divider()
-
-                    .padding(.leading, 42)
-
-                inputRow(
-
-                    icon:
-
-                        "arrow.up.right.circle.fill",
-
-                    title: "Tip Out"
-
-                ) {
-
-                    TextField(
-
-                        "0.00",
-
-                        text: $tipOut
-
-                    )
-
-                    .keyboardType(.decimalPad)
-
-                    .multilineTextAlignment(
-
-                        .trailing
-
-                    )
-
-                }
-
-            }
-
-        }
-
-        .padding(18)
-
-        .background(
-
-            cardBackground
-
-        )
-
+        ShiftTipsSection(cashTips: $cashTips, cardTips: $cardTips, tipOut: $tipOut)
     }
 
     // MARK: - Earnings Breakdown
@@ -1429,35 +1300,13 @@ struct AddShiftView: View {
 
     private func saveShift() {
 
-        let shift = Shift(
-
-            date: date,
-
-            workplace: workplace,
-
-            shiftTypeName: shiftTypeName,
-
-            hoursWorked:
-
-                Double(hoursWorked) ?? 0,
-
-            hourlyRate:
-
-                Double(hourlyRate) ?? 0,
-
-            cashTips:
-
-                Double(cashTips) ?? 0,
-
-            cardTips:
-
-                Double(cardTips) ?? 0,
-
-            tipOut:
-
-                Double(tipOut) ?? 0
-
-        )
+        let shift: Shift
+        do {
+            shift = try draft.makeShift()
+        } catch {
+            validationError = error.localizedDescription
+            return
+        }
 
         shiftStore.addShift(
 

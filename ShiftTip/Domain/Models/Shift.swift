@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum ShiftType: String, Codable, CaseIterable, Identifiable {
+nonisolated enum ShiftType: String, Codable, CaseIterable, Identifiable {
 
     case brunch = "Brunch"
     case day = "Day"
@@ -20,7 +20,7 @@ enum ShiftType: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-struct Shift: Identifiable, Codable {
+nonisolated struct Shift: Identifiable, Codable, Sendable {
 
     var id: UUID = UUID()
 
