@@ -122,6 +122,7 @@ struct AddShiftView: View {
             .navigationTitle("Add Shift")
 
             .navigationBarTitleDisplayMode(.inline)
+            .shiftKeyboardToolbar()
             .alert("Check Shift Details", isPresented: Binding(
                 get: { validationError != nil },
                 set: { if !$0 { validationError = nil } }
