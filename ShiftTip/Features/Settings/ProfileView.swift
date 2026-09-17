@@ -81,6 +81,17 @@ struct ProfileView: View {
 
                     manageShiftTypesCard
 
+                    NavigationLink {
+                        BackupView()
+                    } label: {
+                        Label("Backup & Restore", systemImage: "externaldrive")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(18)
+                            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20))
+                    }
+
+
                     earningsGoalsCard
 
                     currentSettingsCard

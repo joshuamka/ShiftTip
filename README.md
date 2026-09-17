@@ -84,8 +84,7 @@ Retry Loading for load failures; save failures retain form entries for retrying
 Save. The persistence backend is injectable for deterministic failure tests.
 
 UserDefaults does not report asynchronous disk-write errors, so this is not a
-claim of durable disk-write confirmation. Atomic file/database persistence and
-backup/restore remain future work.
+claim of durable disk-write confirmation. Atomic file/database persistence remains future work. Backup/restore is described below.
 
 ```sh
 swiftc ShiftTip/Data/Persistence/RecordStorage.swift \
@@ -105,4 +104,44 @@ combined total. Existing goal amounts are preserved and now apply to tips only.
 
 Existing shift JSON is unchanged. Internal combined estimates remain for backward
 compatibility, but are not presented as received income. Actual paycheck entry,
-payroll deduction calculation, and backup/restore are not implemented yet.
+and payroll deduction calculation are not implemented yet.
+
+## Backup and restore
+
+Profile → Backup & Restore saves a versioned JSON file containing shifts,
+workplaces, custom shift types, default preferences, tip goals, and onboarding state.
+Use Save Backup to store it in Files/iCloud Drive. Reports remain separate from
+restorable backups.
+
+Import validates the format/version, required shift IDs, unique IDs per collection,
+finite nonnegative input amounts, and a 25 MB file limit. A preview lists added and
+skipped records. Restore merges missing shift IDs and keeps existing versions on
+conflict. Workplace/type choices also match by trimmed, case-insensitive name.
+Reimporting the same backup does not duplicate shifts. Independently created shifts
+with different IDs remain distinct even when their field values match.
+
+Settings are optional and off by default. The preview is rejected if current data
+changes before confirmation. All output is encoded and a recovery JSON file is
+atomically written to Application Support/ShiftTip/Recovery before one complete
+UserDefaults domain update. Unrelated preference keys are preserved. An encoding
+or recovery-file write failure prevents the defaults update. UserDefaults still
+cannot confirm asynchronous disk durability; this is not a database transaction.
+
+Recovery copies are listed in Backup & Restore. Tap to review/merge, or long-press
+to save a copy to Files. They do not undo newly added records or replace existing
+versions. Store load errors block backup/restore to avoid overwriting unreadable
+records. Keep an external backup; recovery files alone do not survive app removal.
+
+```sh
+swiftc ShiftTip/Domain/Models/*.swift ShiftTip/Services/Backup/*.swift \
+  Tests/BackupTests.swift -o /tmp/shifttip-backup-tests
+/tmp/shifttip-backup-tests
+```
+
+Validation covers JSON round trips, repeated merges, conflicts, settings choice,
+invalid versions/IDs/amounts, size limits, recovery files, write failures, and an
+isolated UserDefaults suite. Core and FileDocument code are type-checked directly;
+the new screen is separately type-checked against store interfaces because this
+sandbox cannot run Observation's compiler plugin. Full device UI verification is
+still required: save to Files, import, cancel preview, restore, import again,
+restart, and export a recovery copy.

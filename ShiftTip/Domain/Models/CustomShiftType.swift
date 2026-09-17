@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CustomShiftType: Identifiable, Codable, Equatable {
+nonisolated struct CustomShiftType: Identifiable, Codable, Equatable {
 
     var id: UUID
     var name: String

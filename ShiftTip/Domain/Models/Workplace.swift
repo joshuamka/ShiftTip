@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Workplace: Identifiable, Codable, Equatable {
+nonisolated struct Workplace: Identifiable, Codable, Equatable {
 
     var id: UUID
     var name: String
